@@ -1,1 +1,9 @@
 hello cruel world, I am resurected
+
+Placeholder and dump of what will be the RESTProvider library.
+
+
+In order to provide a test framework, we use PowerMock as describe in the following page which I strongly recommend to follow and understand:
+https://sites.google.com/site/androiddevtesting/
+
+
