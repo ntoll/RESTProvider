@@ -7,3 +7,4 @@ default.*
 *.dex
 *.apk
 */**/*DSStore
+*/.settings
