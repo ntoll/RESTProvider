@@ -17,6 +17,8 @@ import android.util.Log;
 
 public class JsonCursor extends AbstractCursor implements CursorHandler<JsonCursor> {
 
+    private static final String COLUMN_ID = "_id";
+
     private static final String TAG = JsonCursor.class.getSimpleName();
 
     private static ObjectMapper mapper = new ObjectMapper();
@@ -29,16 +31,26 @@ public class JsonCursor extends AbstractCursor implements CursorHandler<JsonCurs
 
     private String[] columnNames;
 
+    private boolean withId;
+
     public JsonCursor() {
         this(null);
     }
 
     public JsonCursor(String rootNode) {
+        this(rootNode, false);
+    }
+
+    public JsonCursor(String rootNode, boolean withId) {
         root = rootNode;
+        this.withId = withId;
     }
 
     @Override
     public String[] getColumnNames() {
+        if (withId) {
+            columnNames[columnNames.length-1] = COLUMN_ID;
+        }
         return columnNames;
     }
 
@@ -61,6 +73,9 @@ public class JsonCursor extends AbstractCursor implements CursorHandler<JsonCurs
 
     @Override
     public int getInt(int column) {
+        if (withId && columnNames[column].equals(COLUMN_ID)) {
+            return mPos;
+        }
         return current.path(columnNames[column]).getIntValue();
     }
 
@@ -96,10 +111,10 @@ public class JsonCursor extends AbstractCursor implements CursorHandler<JsonCurs
     public JsonCursor handleResponse(HttpResponse response) throws ClientProtocolException,
             IOException {
         array = mapper.readTree(response.getEntity().getContent());
-        
+
         if (RESTProvider.DEBUG)
             Log.i(TAG, "getting: " + array.toString());
-        
+
         if (root != null) {
             array = array.path(root);
         }
@@ -108,10 +123,14 @@ public class JsonCursor extends AbstractCursor implements CursorHandler<JsonCurs
         if (array.isArray()) {
             it = array.path(0).getFieldNames();
             size = array.path(0).size();
-        }else {
+        } else {
             it = array.getFieldNames();
             size = array.size();
         }
+
+        if (withId)
+            size += 1;
+        
         columnNames = new String[size];
         int i = 0;
         while (it.hasNext()) {

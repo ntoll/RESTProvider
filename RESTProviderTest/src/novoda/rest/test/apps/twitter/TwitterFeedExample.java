@@ -6,7 +6,7 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.SimpleCursorAdapter;
 
 public class TwitterFeedExample extends ListActivity {
 
@@ -16,8 +16,10 @@ public class TwitterFeedExample extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		CPAsyncHandler g = new CPAsyncHandler(getContentResolver());
-		g.startQuery(1, null, Uri.parse("content://novoda.rest.test.twitter"), null,
-				"q=?", new String[] { "droidcon" }, null);
+		
+		// it actually don't work with the query options yet
+		g.startQuery(1, null, Uri.parse("content://novoda.rest.test.twitter"),
+				null, "q=?", new String[] { "droidcon" }, null);
 	}
 
 	private class CPAsyncHandler extends AsyncQueryHandler {
@@ -29,10 +31,10 @@ public class TwitterFeedExample extends ListActivity {
 		@Override
 		protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
 			super.onQueryComplete(token, cookie, cursor);
-			while (cursor.moveToNext()) {
-				Log.i(TAG, cursor.getString(cursor
-						.getColumnIndexOrThrow("text")));
-			}
+			setListAdapter(new SimpleCursorAdapter(TwitterFeedExample.this,
+					android.R.layout.simple_list_item_2, cursor, new String[] {
+							"from_user", "text" }, new int[] {
+							android.R.id.text1, android.R.id.text2 }));
 		}
 	}
 }
