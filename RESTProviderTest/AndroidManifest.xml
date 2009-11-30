@@ -10,7 +10,11 @@
 
 		<uses-library
 			android:name="android.test.runner" />
-		
+
+		<provider
+			android:name="novoda.rest.test.apps.twitter.TwitterFeedExampleProvider"
+			android:authorities="novoda.rest.test.twitter" />
+
 		<activity
 			android:name="RestDemos">
 			<intent-filter>
@@ -22,7 +26,7 @@
 					android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		
+
 		<activity
 			android:name=".apps.twitter.TwitterFeedExample"
 			android:label="Twitter Feed Example">
@@ -40,4 +44,6 @@
 	<instrumentation
 		android:targetPackage="novoda.rest"
 		android:name="android.test.InstrumentationTestRunner" />
+	<uses-permission
+		android:name="android.permission.INTERNET" />
 </manifest> 

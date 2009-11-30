@@ -3,24 +3,23 @@ package novoda.rest.cursors;
 
 import java.io.IOException;
 
+import novoda.rest.handlers.CursorHandler;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 
-import android.database.Cursor;
 
+// not used for now
 public class CursorFactory {
 
     private static final String APPLICATION_JSON = "application/json";
 
     private static final String CONTENT_TYPE = "Content-Type";
 
-    public static Cursor create(HttpResponse response, String root) throws ClientProtocolException,
+    public static CursorHandler<JsonCursor> create(String root) throws ClientProtocolException,
             IOException {
-        if (isOK(response) && isJson(response)) {
-            return new JsonCursor(root).handleResponse(response);
-        }
-        return null;
+        return new JsonCursor(root);
     }
 
     public static boolean isJson(HttpResponse response) {

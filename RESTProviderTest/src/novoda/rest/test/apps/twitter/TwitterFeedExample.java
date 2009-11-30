@@ -6,20 +6,23 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 public class TwitterFeedExample extends ListActivity {
-	
+
+	private static final String TAG = TwitterFeedExample.class.getSimpleName();
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		Mu g = new Mu(this.getContentResolver());
-		g.startQuery(1, null, Uri.parse("content://com.test.new"), null, null,
-				null, null);
+		CPAsyncHandler g = new CPAsyncHandler(getContentResolver());
+		g.startQuery(1, null, Uri.parse("content://novoda.rest.test.twitter"), null,
+				"q=?", new String[] { "droidcon" }, null);
 	}
 
-	private class Mu extends AsyncQueryHandler {
-		public Mu(ContentResolver cr) {
+	private class CPAsyncHandler extends AsyncQueryHandler {
+
+		public CPAsyncHandler(ContentResolver cr) {
 			super(cr);
 		}
 
@@ -27,14 +30,9 @@ public class TwitterFeedExample extends ListActivity {
 		protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
 			super.onQueryComplete(token, cookie, cursor);
 			while (cursor.moveToNext()) {
-//
-//				Log.i("test", j.hasMessages(12)
-//						+ cursor.getString(cursor
-//								.getColumnIndexOrThrow("from_user")));
+				Log.i(TAG, cursor.getString(cursor
+						.getColumnIndexOrThrow("text")));
 			}
-			getMainLooper().quit();
 		}
 	}
-	
-	
 }
