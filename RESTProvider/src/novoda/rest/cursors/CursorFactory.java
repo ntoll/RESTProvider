@@ -9,6 +9,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 
+import android.net.Uri;
+
 
 // not used for now
 public class CursorFactory {
