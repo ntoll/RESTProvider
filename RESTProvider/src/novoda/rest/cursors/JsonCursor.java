@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import novoda.rest.RESTProvider;
-import novoda.rest.handlers.CursorHandler;
+import novoda.rest.handlers.QueryHandler;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -15,7 +15,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import android.database.AbstractCursor;
 import android.util.Log;
 
-public class JsonCursor extends AbstractCursor implements CursorHandler<JsonCursor> {
+public class JsonCursor extends AbstractCursor implements QueryHandler<JsonCursor> {
 
     private static final String COLUMN_ID = "_id";
 

@@ -3,13 +3,11 @@ package novoda.rest.cursors;
 
 import java.io.IOException;
 
-import novoda.rest.handlers.CursorHandler;
+import novoda.rest.handlers.QueryHandler;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
-
-import android.net.Uri;
 
 
 // not used for now
@@ -19,7 +17,7 @@ public class CursorFactory {
 
     private static final String CONTENT_TYPE = "Content-Type";
 
-    public static CursorHandler<JsonCursor> create(String root) throws ClientProtocolException,
+    public static QueryHandler<JsonCursor> create(String root) throws ClientProtocolException,
             IOException {
         return new JsonCursor(root);
     }

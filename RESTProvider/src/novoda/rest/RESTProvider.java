@@ -5,10 +5,11 @@ import java.io.IOException;
 import java.net.ConnectException;
 
 import novoda.rest.cursors.ErrorCursor;
-import novoda.rest.handlers.CursorHandler;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.params.ConnPerRouteBean;
@@ -23,6 +24,7 @@ import org.apache.http.params.HttpProtocolParams;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.database.AbstractCursor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
@@ -43,7 +45,7 @@ public abstract class RESTProvider extends ContentProvider {
 
     protected static final String HTTP_USER_AGENT = "Android/RESTProvider";
 
-    private static AbstractHttpClient httpClient;
+    protected static AbstractHttpClient httpClient;
 
     static {
         setupHttpClient();
@@ -56,19 +58,38 @@ public abstract class RESTProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        throw new UnsupportedOperationException("not implemented yet");
+        try {
+            return getDeleteHandler(uri).handleResponse(
+                    httpClient
+                            .execute((HttpUriRequest)deleteRequest(uri, selection, selectionArgs)));
+        } catch (ClientProtocolException e) {
+            Log.e(TAG, "an error occured in delete", e);
+            return -1;
+        } catch (IOException e) {
+            Log.e(TAG, "an error occured in delete", e);
+            return -1;
+        }
     }
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        throw new UnsupportedOperationException("not implemented yet");
+        try {
+            return getInsertHandler(uri).handleResponse(
+                    httpClient.execute((HttpUriRequest)insertRequest(uri, values)));
+        } catch (ClientProtocolException e) {
+            Log.e(TAG, "an error occured in insert", e);
+            return null;
+        } catch (IOException e) {
+            Log.e(TAG, "an error occured in insert", e);
+            return null;
+        }
     }
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
             String sortOrder) {
         try {
-            return getResponseHandler(uri, QUERY).handleResponse(
+            return getQueryHandler(uri).handleResponse(
                     httpClient.execute((HttpUriRequest)queryRequest(uri, projection, selection,
                             selectionArgs, sortOrder)));
         } catch (ConnectException e) {
@@ -85,7 +106,16 @@ public abstract class RESTProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        throw new UnsupportedOperationException("not implemented yet");
+        try {
+            return getUpdateHandler(uri).handleResponse(
+                    httpClient.execute(updateRequest(uri, values, selection, selectionArgs)));
+        } catch (ClientProtocolException e) {
+            Log.e(TAG, "an error occured in update", e);
+            return -1;
+        } catch (IOException e) {
+            Log.e(TAG, "an error occured in update", e);
+            return -1;
+        }
     }
 
     /**
@@ -124,7 +154,19 @@ public abstract class RESTProvider extends ContentProvider {
     public abstract HttpUriRequest updateRequest(Uri uri, ContentValues values, String selection,
             String[] selectionArgs);
 
-    public abstract CursorHandler<?> getResponseHandler(Uri uri, int requestType);
+    public abstract ResponseHandler<? extends AbstractCursor> getQueryHandler(Uri uri);
+
+    public abstract ResponseHandler<? extends Uri> getInsertHandler(Uri uri);
+
+    public abstract ResponseHandler<? extends Integer> getUpdateHandler(Uri uri);
+
+    public abstract ResponseHandler<? extends Integer> getDeleteHandler(Uri uri);
+
+    public void preProcess(HttpUriRequest request) {
+    };
+
+    public void postProcess(HttpResponse response) {
+    };
 
     // Different request type
     static final public int QUERY = 0;
