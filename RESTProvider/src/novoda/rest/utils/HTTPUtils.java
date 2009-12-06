@@ -5,6 +5,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import android.content.ContentValues;
 
 public class HTTPUtils {
 
@@ -54,5 +57,13 @@ public class HTTPUtils {
             }
         }
         return map;
+    }
+
+    public static Map<String, String> convertToParams(ContentValues values) {
+        Map<String, String> ret = new HashMap<String, String>();
+        for (Entry<String, Object> entry : values.valueSet()) {
+            ret.put(entry.getKey(), entry.getValue().toString());
+        }
+        return ret;
     }
 }

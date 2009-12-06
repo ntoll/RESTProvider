@@ -21,6 +21,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.HttpRequestInterceptorList;
+import org.apache.http.protocol.HttpResponseInterceptorList;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -163,10 +165,18 @@ public abstract class RESTProvider extends ContentProvider {
     public abstract ResponseHandler<? extends Integer> getDeleteHandler(Uri uri);
 
     public void preProcess(HttpUriRequest request) {
-    };
+    }
 
     public void postProcess(HttpResponse response) {
-    };
+    }
+    
+    protected HttpRequestInterceptorList getHttpRequestInterceptorList() {
+        return null;
+    }
+    
+    protected HttpResponseInterceptorList getHttpResponseInterceptorList(){
+        return null;
+    }
 
     // Different request type
     static final public int QUERY = 0;
