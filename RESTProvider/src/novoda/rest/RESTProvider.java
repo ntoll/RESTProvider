@@ -3,8 +3,11 @@ package novoda.rest;
 
 import java.io.IOException;
 import java.net.ConnectException;
+import java.util.WeakHashMap;
+import java.util.Map.Entry;
 
 import novoda.rest.cursors.ErrorCursor;
+import novoda.rest.cursors.One2ManyMapping;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
@@ -49,6 +52,8 @@ public abstract class RESTProvider extends ContentProvider {
 
     protected static AbstractHttpClient httpClient;
 
+    protected WeakHashMap<Uri, Cursor> fk;
+
     static {
         setupHttpClient();
     }
@@ -90,15 +95,24 @@ public abstract class RESTProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
             String sortOrder) {
+        
+//        for(Entry<Uri, Cursor> entry : fk.entrySet()){
+//            entry.getKey();
+//            
+//        }
+
         try {
             HttpUriRequest request = queryRequest(uri, projection, selection, selectionArgs,
                     sortOrder);
-            
+
             if (DEBUG)
                 Log.i(TAG, "will query: " + request.getURI());
 
-            return getQueryHandler(uri).handleResponse(httpClient.execute(request));
-            
+            Cursor cursor = getQueryHandler(uri).handleResponse(httpClient.execute(request));
+            if (cursor instanceof One2ManyMapping) {
+                registerMappedCursor(cursor, uri);
+            }
+            return cursor;
         } catch (ConnectException e) {
             Log.w(TAG, "an error occured in query", e);
             return ErrorCursor.getCursor(0, e.getMessage());
@@ -213,4 +227,14 @@ public abstract class RESTProvider extends ContentProvider {
         httpClient = new DefaultHttpClient(cm, httpParams);
     }
 
+    protected void registerMappedCursor(Cursor cursor, Uri uri) {
+        if (cursor instanceof One2ManyMapping) {
+            String[] foreignFields = ((One2ManyMapping)cursor).getForeignFields();
+            if (foreignFields == null)
+                return;
+            for (int i = 0; i < foreignFields.length; i++) {
+                fk.put(Uri.withAppendedPath(uri, foreignFields[i]), cursor);
+            }
+        }
+    }
 }

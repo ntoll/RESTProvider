@@ -11,14 +11,8 @@ import java.util.Map;
 import novoda.rest.RESTProvider;
 import novoda.rest.handlers.QueryHandler;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.message.BasicStatusLine;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -26,7 +20,7 @@ import android.database.AbstractCursor;
 import android.util.Log;
 
 // We should maybe create a factory for this
-public class JsonCursor extends AbstractCursor implements QueryHandler<JsonCursor> {
+public class JsonCursor extends AbstractCursor implements QueryHandler<JsonCursor>, One2ManyMapping {
 
     private static final String COLUMN_ID = "_id";
 
@@ -49,7 +43,6 @@ public class JsonCursor extends AbstractCursor implements QueryHandler<JsonCurso
     private Map<String, List<JsonCursor>> foreignCursors = null;
 
     private String[] foreignKeys;
-
 
     /**
      * Very basic cursor which will parse the response into a JSON object using
@@ -224,33 +217,24 @@ public class JsonCursor extends AbstractCursor implements QueryHandler<JsonCurso
     }
 
     public JsonCursor getForeignCursor(String string) {
-        MockHttpResponse response = new MockHttpResponse( current.path(string).toString());
-        try {
-            return new JsonCursor().handleResponse(response);
-        } catch (ClientProtocolException e) {
-            Log.e(TAG, "an error occured in getForeignCursor", e);
-        } catch (IOException e) {
-            Log.e(TAG, "an error occured in getForeignCursor", e);
-        }
-        return null;
+        JsonCursor cursor = new JsonCursor();
+        cursor.setArray(current.path(string));
+        cursor.init();
+        return cursor;
     }
     
-    private class MockHttpResponse extends BasicHttpResponse {
-        private byte[] response;
+    public JsonCursor getForeignCursor(int index, String string) {
+        JsonCursor cursor = new JsonCursor();
+        cursor.setArray(array.get(index).path(string));
+        cursor.init();
+        return cursor;
+    }
 
-        public MockHttpResponse(StatusLine statusline, String response) {
-            super(statusline);
-            this.response = response.getBytes();
-        }
+    protected void setArray(JsonNode node) {
+        this.array = node;
+    }
 
-        public MockHttpResponse(String json) {
-            this(new BasicStatusLine(new ProtocolVersion("http", 4, 1), 200,
-                    "All Good"), json);
-        }
-
-        @Override
-        public HttpEntity getEntity() {
-            return new ByteArrayEntity(response);
-        }
+    public String[] getForeignFields() {
+        return foreignKeys;
     }
 }

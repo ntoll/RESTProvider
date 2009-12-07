@@ -110,6 +110,7 @@ public class JsonCursorTest extends TestCase {
 		MockHttpResponse response = new MockHttpResponse(json);
 		JsonCursor cursor = new JsonCursor("root").withForeignKey("test")
 				.handleResponse(response);
+		assertTrue(cursor.moveToFirst());
 		JsonCursor f = cursor.getForeignCursor("test");
 		assertTrue(f.moveToFirst());
 		assertEquals(1 ,f.getInt(0));
