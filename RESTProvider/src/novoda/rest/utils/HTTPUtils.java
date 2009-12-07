@@ -24,6 +24,9 @@ public class HTTPUtils {
      *         selectionArgs replacing the '?'
      */
     public static Map<String, String> convertToParams(String selection, String[] selectionArgs) {
+        if (selection == null)
+            return new HashMap<String, String>();
+        
         String t = selection.replaceAll("\\sAND\\s|\\sand\\s", "&");
         for (int i = 0; i < selectionArgs.length; i++) {
             t = t.replaceFirst("\\?", selectionArgs[i]);

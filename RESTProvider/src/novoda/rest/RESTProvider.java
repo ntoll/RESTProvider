@@ -91,9 +91,14 @@ public abstract class RESTProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
             String sortOrder) {
         try {
-            return getQueryHandler(uri).handleResponse(
-                    httpClient.execute((HttpUriRequest)queryRequest(uri, projection, selection,
-                            selectionArgs, sortOrder)));
+            HttpUriRequest request = queryRequest(uri, projection, selection, selectionArgs,
+                    sortOrder);
+            
+            if (DEBUG)
+                Log.i(TAG, "will query: " + request.getURI());
+
+            return getQueryHandler(uri).handleResponse(httpClient.execute(request));
+            
         } catch (ConnectException e) {
             Log.w(TAG, "an error occured in query", e);
             return ErrorCursor.getCursor(0, e.getMessage());
@@ -169,12 +174,12 @@ public abstract class RESTProvider extends ContentProvider {
 
     public void postProcess(HttpResponse response) {
     }
-    
+
     protected HttpRequestInterceptorList getHttpRequestInterceptorList() {
         return null;
     }
-    
-    protected HttpResponseInterceptorList getHttpResponseInterceptorList(){
+
+    protected HttpResponseInterceptorList getHttpResponseInterceptorList() {
         return null;
     }
 

@@ -30,4 +30,9 @@ public class HTTPUtilsTest extends TestCase {
 		String selection = "name=?&value=?";
 		assertEquals(expected, HTTPUtils.convertToParams(selection, sArgs));
 	}
+
+	public void testQueryWithNullValues() throws Exception {
+		Map<String, String> map = new HashMap<String, String>();
+		assertEquals(map, HTTPUtils.convertToParams(null, null));
+	}
 }
