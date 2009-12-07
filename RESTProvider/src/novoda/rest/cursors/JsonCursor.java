@@ -223,9 +223,9 @@ public class JsonCursor extends AbstractCursor implements QueryHandler<JsonCurso
         return cursor;
     }
     
-    public JsonCursor getForeignCursor(int c, String string) {
+    public JsonCursor getForeignCursor(int index, String string) {
         JsonCursor cursor = new JsonCursor();
-        cursor.setArray(array.get(c).path(string));
+        cursor.setArray(array.get(index).path(string));
         cursor.init();
         return cursor;
     }
@@ -235,6 +235,6 @@ public class JsonCursor extends AbstractCursor implements QueryHandler<JsonCurso
     }
 
     public String[] getForeignFields() {
-        return getForeignFields();
+        return foreignKeys;
     }
 }
