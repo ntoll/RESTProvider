@@ -20,4 +20,18 @@ public class UriCacheTest extends TestCase {
 		UriCache.getInstance().put(Uri.parse("content://test4"), cur);
 		assertTrue(UriCache.getInstance().canRespondTo(Uri.parse("content://test3")));
 	}
+	
+	public void testClearCache() throws Exception {
+		populateRandom();
+		UriCache.getInstance().clear();
+		assertEquals(0, UriCache.getInstance().size());
+	}
+	
+	private void populateRandom() {
+		JsonCursor cur = new JsonCursor();
+		UriCache.getInstance().put(Uri.parse("content://test"), cur);
+		UriCache.getInstance().put(Uri.parse("content://test2"), cur);
+		UriCache.getInstance().put(Uri.parse("content://test3"), cur);
+		UriCache.getInstance().put(Uri.parse("content://test4"), cur);
+	}
 }

@@ -95,6 +95,7 @@ public abstract class RESTProvider extends ContentProvider {
 
         // Check cache first
         if (UriCache.getInstance().canRespondTo(uri)) {
+            Log.i(TAG, uri.toString() + " will be taken from cache");
             return UriCache.getInstance().get(uri);
         }
 
@@ -224,17 +225,31 @@ public abstract class RESTProvider extends ContentProvider {
 
     protected void registerMappedCursor(Cursor cursor, Uri uri) {
         if (cursor instanceof One2ManyMapping) {
-            String primaryField = "_id"; //((One2ManyMapping)cursor).getPrimaryFieldName();
+            UriCache cache = UriCache.getInstance();
+
             String[] foreignFields = ((One2ManyMapping)cursor).getForeignFields();
             if (foreignFields == null)
                 return;
 
+            String[] ids = cursor.getExtras().getStringArray("ids");
             for (int j = 0; j < cursor.getCount(); j++) {
-                String idField = cursor.getString(cursor.getColumnIndexOrThrow(primaryField));
+                String idField = ids[j];
+                Uri returi = uri;
+
+                if (uri.getLastPathSegment() != null && uri.getLastPathSegment().equals(idField))
+                    returi = Uri
+                            .parse(uri.toString().subSequence(0,
+                                    uri.toString().length() - uri.getLastPathSegment().length())
+                                    .toString());
+                
+                returi = Uri.withAppendedPath(returi, ids[j]);
+
                 for (int i = 0; i < foreignFields.length; i++) {
-                    UriCache.getInstance().put(
-                            Uri.withAppendedPath(uri, idField + "/" + foreignFields[i]),
-                            ((One2ManyMapping)cursor).getForeignCursor(j, foreignFields[i]));
+                    Uri ruri = Uri.withAppendedPath(returi, foreignFields[i]);
+                    Cursor n = ((One2ManyMapping)cursor).getForeignCursor(j, foreignFields[i]);
+                    if (DEBUG)
+                        Log.d(TAG, "putting " + ruri.toString() + " into cache.");
+                    cache.put(ruri, n);
                 }
             }
         }

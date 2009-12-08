@@ -14,6 +14,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import android.database.AbstractCursor;
+import android.os.Bundle;
 import android.util.Log;
 
 // We should maybe create a factory for this
@@ -153,6 +154,19 @@ public class JsonCursor extends AbstractCursor implements QueryHandler<JsonCurso
     @Override
     public boolean isNull(int column) {
         return current.path(columnNames[column]).isNull();
+    }
+
+    @Override
+    public Bundle getExtras() {
+        Bundle b = new Bundle();
+        String[] ids = new String[array.size()];
+        for (int i = 0; i < array.size(); i++) {
+            ids[i] =array.get(i).path(idNode).getValueAsText();
+        }
+        b.putStringArray("ids", ids);
+        b.putStringArray("foreign_keys", foreignKeys);
+        b.putString("json", array.toString());
+        return b;
     }
 
     @Override
