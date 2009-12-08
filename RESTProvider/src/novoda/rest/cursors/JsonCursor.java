@@ -3,10 +3,7 @@ package novoda.rest.cursors;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import novoda.rest.RESTProvider;
 import novoda.rest.handlers.QueryHandler;
@@ -39,8 +36,6 @@ public class JsonCursor extends AbstractCursor implements QueryHandler<JsonCurso
     private boolean withId;
 
     private String idNode = null;
-
-    private Map<String, List<JsonCursor>> foreignCursors = null;
 
     private String[] foreignKeys;
 
@@ -93,7 +88,6 @@ public class JsonCursor extends AbstractCursor implements QueryHandler<JsonCurso
     }
 
     public JsonCursor withForeignKey(String... keys) {
-        foreignCursors = new HashMap<String, List<JsonCursor>>(keys.length);
         foreignKeys = keys;
         return this;
     }
@@ -178,7 +172,7 @@ public class JsonCursor extends AbstractCursor implements QueryHandler<JsonCurso
 
     private JsonCursor init() {
         if (RESTProvider.DEBUG)
-            Log.i(TAG, "getting: " + array.toString());
+            Log.i(TAG, "JSON: " + array.toString());
 
         if (root != null) {
             array = array.path(root);
@@ -193,7 +187,7 @@ public class JsonCursor extends AbstractCursor implements QueryHandler<JsonCurso
             size = array.size();
         }
 
-        if (foreignCursors != null) {
+        if (foreignKeys != null) {
             size -= foreignKeys.length;
         }
 
@@ -222,7 +216,7 @@ public class JsonCursor extends AbstractCursor implements QueryHandler<JsonCurso
         cursor.init();
         return cursor;
     }
-    
+
     public JsonCursor getForeignCursor(int index, String string) {
         JsonCursor cursor = new JsonCursor();
         cursor.setArray(array.get(index).path(string));
@@ -236,5 +230,9 @@ public class JsonCursor extends AbstractCursor implements QueryHandler<JsonCurso
 
     public String[] getForeignFields() {
         return foreignKeys;
+    }
+
+    public String getPrimaryFieldName() {
+        return (idNode != null) ? idNode : (withId) ? COLUMN_ID : null;
     }
 }

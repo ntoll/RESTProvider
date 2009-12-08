@@ -1,6 +1,7 @@
 package novoda.rest.test;
 
 import junit.framework.TestCase;
+import novoda.rest.cache.UriCache;
 import novoda.rest.cursors.JsonCursor;
 import novoda.rest.test.mock.MockRESTProvider;
 
@@ -15,25 +16,27 @@ import android.net.Uri;
 public class RESTProviderTest extends TestCase {
 
 	private MyRestProvider provider;
+	
 
 	@Override
 	protected void setUp() throws Exception {
 		provider = new MyRestProvider();
+		UriCache.getInstance().put(Uri.parse("content://test/1/f"), new MyCursor("content://test/1/f"));
+		UriCache.getInstance().put(Uri.parse("content://test/2/f"), new MyCursor("content://test/2/f"));
+		UriCache.getInstance().put(Uri.parse("content://test/3/f"), new MyCursor("content://test/3/f"));
+		UriCache.getInstance().put(Uri.parse("content://test/4/f"), new MyCursor("content://test/4/f"));
 		super.setUp();
 	}
 
-	public void testForeignKey() throws Exception {
-		provider.query(Uri.parse("content://test"), null, null, null, null);
-		Cursor cur = provider.query(Uri.parse("content://test/1/f1"), null,
-				null, null, null);
-		assertNotNull(cur.moveToFirst());
-		assertEquals(cur.getString(0), "1");
+	public void testQueryCacheShouldReturnCache() throws Exception {
+		Cursor cur = provider.query(Uri.parse("content://test/3/f"), null, null, null, null);
+		assertEquals(cur.getString(0), "content://test/3/f");
 	}
 
 	private class MyRestProvider extends MockRESTProvider {
 		@Override
 		public ResponseHandler<? extends AbstractCursor> getQueryHandler(Uri uri) {
-			return new MyCursor();
+			return new MyCursor("");
 		}
 
 		@Override
@@ -44,7 +47,18 @@ public class RESTProviderTest extends TestCase {
 	}
 
 	private class MyCursor extends JsonCursor {
+		
+		private String value;
 
+		public MyCursor(String value) {
+			this.value = value;
+		}
+		
+		@Override
+		public String getString(int column) {
+			return value;
+		}
+		
 		@Override
 		public String[] getForeignFields() {
 			return new String[] { "f1" };

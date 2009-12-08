@@ -3,9 +3,8 @@ package novoda.rest;
 
 import java.io.IOException;
 import java.net.ConnectException;
-import java.util.WeakHashMap;
-import java.util.Map.Entry;
 
+import novoda.rest.cache.UriCache;
 import novoda.rest.cursors.ErrorCursor;
 import novoda.rest.cursors.One2ManyMapping;
 
@@ -52,8 +51,6 @@ public abstract class RESTProvider extends ContentProvider {
 
     protected static AbstractHttpClient httpClient;
 
-    protected WeakHashMap<Uri, Cursor> fk;
-
     static {
         setupHttpClient();
     }
@@ -95,11 +92,11 @@ public abstract class RESTProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
             String sortOrder) {
-        
-//        for(Entry<Uri, Cursor> entry : fk.entrySet()){
-//            entry.getKey();
-//            
-//        }
+
+        // Check cache first
+        if (UriCache.getInstance().canRespondTo(uri)) {
+            return UriCache.getInstance().get(uri);
+        }
 
         try {
             HttpUriRequest request = queryRequest(uri, projection, selection, selectionArgs,
@@ -109,9 +106,7 @@ public abstract class RESTProvider extends ContentProvider {
                 Log.i(TAG, "will query: " + request.getURI());
 
             Cursor cursor = getQueryHandler(uri).handleResponse(httpClient.execute(request));
-            if (cursor instanceof One2ManyMapping) {
-                registerMappedCursor(cursor, uri);
-            }
+            registerMappedCursor(cursor, uri);
             return cursor;
         } catch (ConnectException e) {
             Log.w(TAG, "an error occured in query", e);
@@ -229,11 +224,18 @@ public abstract class RESTProvider extends ContentProvider {
 
     protected void registerMappedCursor(Cursor cursor, Uri uri) {
         if (cursor instanceof One2ManyMapping) {
+            String primaryField = "_id"; //((One2ManyMapping)cursor).getPrimaryFieldName();
             String[] foreignFields = ((One2ManyMapping)cursor).getForeignFields();
             if (foreignFields == null)
                 return;
-            for (int i = 0; i < foreignFields.length; i++) {
-                fk.put(Uri.withAppendedPath(uri, foreignFields[i]), cursor);
+
+            for (int j = 0; j < cursor.getCount(); j++) {
+                String idField = cursor.getString(cursor.getColumnIndexOrThrow(primaryField));
+                for (int i = 0; i < foreignFields.length; i++) {
+                    UriCache.getInstance().put(
+                            Uri.withAppendedPath(uri, idField + "/" + foreignFields[i]),
+                            ((One2ManyMapping)cursor).getForeignCursor(j, foreignFields[i]));
+                }
             }
         }
     }
