@@ -118,6 +118,11 @@ public abstract class RESTProvider extends ContentProvider {
         } catch (IOException e) {
             Log.w(TAG, "an error occured in query", e);
             return ErrorCursor.getCursor(0, e.getMessage());
+        } catch (IllegalArgumentException e) {
+            Log.w(TAG, "an error occured in query", e);
+            return ErrorCursor.getCursor(0,
+                    "Unknown URI (not in cache or not answerable by the implementator): "
+                            + uri.toString());
         }
     }
 
@@ -241,7 +246,7 @@ public abstract class RESTProvider extends ContentProvider {
                             .parse(uri.toString().subSequence(0,
                                     uri.toString().length() - uri.getLastPathSegment().length())
                                     .toString());
-                
+
                 returi = Uri.withAppendedPath(returi, ids[j]);
 
                 for (int i = 0; i < foreignFields.length; i++) {
