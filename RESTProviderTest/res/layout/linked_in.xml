@@ -4,21 +4,20 @@
 	android:orientation="vertical"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
-	<TextView
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:text="@string/hello" />
 	<Button
-		android:id="@+id/Button01"
+		android:id="@+id/authorize"
 		android:layout_height="wrap_content"
 		android:text="Authorize"
 		android:layout_width="fill_parent"
 		android:onClick="onAuthorizeClick"></Button>
-
 	<Button
-		android:id="@+id/Button02"
+		android:id="@+id/query"
 		android:layout_height="wrap_content"
 		android:text="Query"
 		android:layout_width="fill_parent"
 		android:onClick="onQueryClick"></Button>
+	<ListView
+		android:id="@+id/list"
+		android:layout_height="fill_parent"
+		android:layout_width="fill_parent" />
 </LinearLayout>

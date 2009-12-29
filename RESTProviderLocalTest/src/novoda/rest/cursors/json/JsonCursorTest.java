@@ -22,6 +22,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import android.database.AbstractCursor;
+
 public class JsonCursorTest {
 
 	private static JsonNode json;
@@ -31,6 +33,9 @@ public class JsonCursorTest {
 	public static void setUpBeforeClass() throws Exception {
 		json = mock(JsonNode.class);
 		jsoncursor = mock(JsonCursor.class);
+		
+		// does not work
+		when(jsoncursor.moveToFirst()).thenReturn(true);
 	}
 
 	@AfterClass
