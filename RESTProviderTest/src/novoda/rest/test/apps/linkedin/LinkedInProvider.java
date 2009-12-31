@@ -43,8 +43,9 @@ public class LinkedInProvider extends DefaultRESTProvider {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (sharedPreferences.contains(OAuthParameters.OAUTH_TOKEN_KEY)
                     && sharedPreferences.contains(OAuthParameters.OAUTH_TOKEN_SECRET_KEY)) {
-                consumer.setTokenWithSecret(sharedPreferences.getString(OAuthParameters.OAUTH_TOKEN_KEY, ""),
-                        sharedPreferences.getString(OAuthParameters.OAUTH_TOKEN_SECRET_KEY, ""));
+                consumer.setTokenWithSecret(sharedPreferences.getString(
+                        OAuthParameters.OAUTH_TOKEN_KEY, ""), sharedPreferences.getString(
+                        OAuthParameters.OAUTH_TOKEN_SECRET_KEY, ""));
             }
         }
     };
@@ -53,6 +54,7 @@ public class LinkedInProvider extends DefaultRESTProvider {
     public boolean onCreate() {
         SharedPreferences pref = getContext().getSharedPreferences(Constants.SHARED_PREF_NAME,
                 Context.MODE_PRIVATE);
+        pref.registerOnSharedPreferenceChangeListener(listener);
 
         consumer = new CommonsHttpOAuthConsumer(Constants.CONSUMER_KEY,
                 Constants.CONSUMER_KEY_SECRET, SignatureMethod.HMAC_SHA1);
@@ -61,8 +63,7 @@ public class LinkedInProvider extends DefaultRESTProvider {
                 .getString(OAuthParameters.OAUTH_TOKEN_SECRET_KEY, ""));
 
         if (consumer.getConsumerKey().equals("") || consumer.getConsumerKey() == null)
-            pref.registerOnSharedPreferenceChangeListener(listener);
-
+            return false;
         return super.onCreate();
     }
 
@@ -150,8 +151,7 @@ public class LinkedInProvider extends DefaultRESTProvider {
             return "/network/updates/@count";
         }
     }
-    
-    
+
     public class LinkedInUpdateHandler extends UpdateHandler {
         public Integer handleResponse(HttpResponse response) throws ClientProtocolException,
                 IOException {

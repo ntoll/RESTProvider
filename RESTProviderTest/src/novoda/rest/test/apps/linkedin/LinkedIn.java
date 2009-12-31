@@ -19,6 +19,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -54,6 +56,7 @@ public class LinkedIn extends Activity {
             e.putString("oauth_token", secondLegToken.get("oauth_token"));
             e.putString("oauth_token_secret", secondLegToken.get("oauth_token_secret"));
             e.commit();
+            actOnView();
         } catch (OAuthException e) {
             Log.e(TAG, "an error occured in onNewIntent", e);
         } catch (ClientProtocolException e) {
@@ -76,6 +79,12 @@ public class LinkedIn extends Activity {
                 "https://api.linkedin.com/uas/oauth/authorize",
                 "https://api.linkedin.com/uas/oauth/accessToken");
 
+        actOnView();
+        status = (EditText)findViewById(R.id.status);
+        list = (ListView)findViewById(R.id.list);
+    }
+
+    private void actOnView() {
         if (pref.contains("oauth_token")) {
             ((Button)findViewById(R.id.authorize)).setEnabled(false);
             ((Button)findViewById(R.id.query)).setEnabled(true);
@@ -87,8 +96,21 @@ public class LinkedIn extends Activity {
             ((Button)findViewById(R.id.update)).setEnabled(false);
             ((EditText)findViewById(R.id.status)).setEnabled(false);
         }
-        status = (EditText)findViewById(R.id.status);
-        list = (ListView)findViewById(R.id.list);
+    }
+    
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, 1, 0, "Delete oauth token");
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case 1:
+            pref.edit().clear().commit();
+            actOnView();
+            return true;
+        }
+        return false;
     }
 
     public void onUpdateClick(View view) {
