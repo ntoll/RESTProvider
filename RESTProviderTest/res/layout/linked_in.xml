@@ -16,8 +16,27 @@
 		android:text="Query"
 		android:layout_width="fill_parent"
 		android:onClick="onQueryClick"></Button>
+
+	<RelativeLayout
+		android:id="@+id/FrameLayout01"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content">
+		<Button
+			android:id="@+id/update"
+			android:layout_height="wrap_content"
+			android:text="Update"
+			android:layout_alignParentRight="true"
+			android:layout_width="wrap_content"
+			android:onClick="onUpdateClick" />
+		<EditText
+			android:id="@+id/status"
+			android:layout_width="fill_parent"
+			android:layout_toLeftOf="@id/update"
+			android:layout_height="wrap_content" />
+	</RelativeLayout>
 	<ListView
 		android:id="@+id/list"
 		android:layout_height="fill_parent"
 		android:layout_width="fill_parent" />
+
 </LinearLayout>

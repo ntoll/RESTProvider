@@ -24,15 +24,21 @@ public abstract class DefaultRESTProvider extends RESTProvider {
 
     @Override
     public HttpUriRequest queryRequest(Uri uri, String[] projection, String selection,
-            String[] selectionArgs, String sortOrder) {
+            String[] selectionArgs, String sortOrder) {   
         return getRequest(uri, RESTProvider.QUERY, HTTPUtils.convertToParams(selection, selectionArgs));
     }
 
     @Override
     public HttpUriRequest updateRequest(Uri uri, ContentValues values, String selection,
             String[] selectionArgs) {
-        return getRequest(uri, RESTProvider.UPDATE, HTTPUtils.convertToParams(selection, selectionArgs));
+        return getRequest(uri, RESTProvider.UPDATE, HTTPUtils.convertToParams(values));
     }
 
+    /**
+     * @param uri
+     * @param type
+     * @param params
+     * @return
+     */
     public abstract HttpUriRequest getRequest(Uri uri, int type, Map<String, String> params);
 }
