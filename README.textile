@@ -55,20 +55,19 @@ In Eclipse:
 _File > New Android Project_
 Select _Create project from existing source_
 For the location select: RESTProvider/RESTProvider
-Dependant files needed on build path, add to RESTProvider/RESTProvider/lib
+Dependant files needed on build path, add the following to RESTProvider/RESTProvider/lib
 
+* "Signpost-core-1.1.jar":http://oss.sonatype.org/content/repositories/signpost-releases/oauth/signpost/signpost-core/1.1/signpost-core-1.1.jar
+* "Signpost-commonsHTTP-1.1.jar":http://oss.sonatype.org/content/repositories/signpost-releases/oauth/signpost/signpost-commonshttp4/1.1/signpost-commonshttp4-1.1.jar
 * "Droidfu v1":http://cloud.github.com/downloads/kaeppler/droid-fu/droid-fu-1.0-SNAPSHOT.jar
+* "DOM4J":http://sourceforge.net/projects/dom4j/files/dom4j/1.6.1/dom4j-1.6.1.jar/download
+* "Jackson-core-asl-1.4.1.jar":http://repository.codehaus.org/org/codehaus/jackson/jackson-core-asl/1.4.1/jackson-core-asl-1.4.1.jar
+* "Jackson-mapper-asl-1.4.1.jar":http://repository.codehaus.org/org/codehaus/jackson/jackson-mapper-asl/1.4.1/
 
 Refresh the directories in eclipse (F5 with the project selected)
 All jars under 'libs' need to be added to the build path.
 You can add each dependancy by right clicking the jar files under this directory and selecting _Build Path > Add to Build Path_.
 You can now depend on this project as a build dependancy to use the RESTProvider in your project.
-
-h3. Exporting jar for use in project
-
-In order for your dependant project to deploy correctly you will need to export the RESTProvider into your dependant project 
-as a jar. To do this: <TO COME>
-
 
 h2. Demos
 
@@ -79,8 +78,7 @@ For the location select: RESTProvider/RESTProviderTest
 All of the libraries under the RESTprovider 'libs' directory need to be added to the build path.
 You can add each library by right clicking the jar files under this directory and selecting _Build Path > Add to Build Path_.
 
-
-Dependant files needed on build path, add to RESTProvider/RESTProviderTest/lib
+Dependant files needed on build path as Android cannot src the dependencies from the other project, add the followingto RESTProvider/RESTProviderTest/lib
 
 * "Signpost-core-1.1.jar":http://oss.sonatype.org/content/repositories/signpost-releases/oauth/signpost/signpost-core/1.1/signpost-core-1.1.jar
 * "Signpost-commonsHTTP-1.1.jar":http://oss.sonatype.org/content/repositories/signpost-releases/oauth/signpost/signpost-commonshttp4/1.1/signpost-commonshttp4-1.1.jar
@@ -90,10 +88,9 @@ Dependant files needed on build path, add to RESTProvider/RESTProviderTest/lib
 * "Jackson-mapper-asl-1.4.1.jar":http://repository.codehaus.org/org/codehaus/jackson/jackson-mapper-asl/1.4.1/
 
 You then need to add the RESTProvider's src as a dependency of this project by right clicking _Build Path > Link Src_ then selecting the directory of the RESTProvider's src on your disk.  
+Note: Intrumentations cannot be run if the RESTProvider is included as src in the Demo project
 
-h3{color:red;}.The Intrumentations cannot be run if the RESTProvider is included as src in the Demo project
-
-h3{color:red;}. Unit Tests are currently broken!
+h3. Unit Tests are currently broken!
 
 This is an experimental way of testing an android locally without deploying to the against an android emulated image using a n android.jar customly extended for testing. In order to provide a test framework, we use PowerMock as describe in the following page which I strongly recommend to follow and understand:
 https://sites.google.com/site/androiddevtesting/
@@ -110,6 +107,11 @@ Dependant files needed on build path in the lib dir:
 * "Jackson-core-asl-1.4.1.jar":http://repository.codehaus.org/org/codehaus/jackson/jackson-core-asl/1.4.1/jackson-core-asl-1.4.1.jar
 * "Jackson-mapper-asl-1.4.1.jar":http://repository.codehaus.org/org/codehaus/jackson/jackson-mapper-asl/1.4.1/
 
+
+h3. Exporting jar for use in project
+
+In order for your dependant project to deploy correctly you will need to export the RESTProvider into your dependant project 
+as a jar. To do this: <TO COME>
 
 h2. Help improve the RESTProvider! 
 
