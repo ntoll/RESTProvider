@@ -84,7 +84,14 @@ Dependant files needed on build path, add to RESTProvider/RESTProviderTest/lib
 
 * "Signpost-core-1.1.jar":http://oss.sonatype.org/content/repositories/signpost-releases/oauth/signpost/signpost-core/1.1/signpost-core-1.1.jar
 * "Signpost-commonsHTTP-1.1.jar":http://oss.sonatype.org/content/repositories/signpost-releases/oauth/signpost/signpost-commonshttp4/1.1/signpost-commonshttp4-1.1.jar
+* "Droidfu v1":http://cloud.github.com/downloads/kaeppler/droid-fu/droid-fu-1.0-SNAPSHOT.jar
+* "DOM4J":http://sourceforge.net/projects/dom4j/files/dom4j/1.6.1/dom4j-1.6.1.jar/download
+* "Jackson-core-asl-1.4.1.jar":http://repository.codehaus.org/org/codehaus/jackson/jackson-core-asl/1.4.1/jackson-core-asl-1.4.1.jar
+* "Jackson-mapper-asl-1.4.1.jar":http://repository.codehaus.org/org/codehaus/jackson/jackson-mapper-asl/1.4.1/
 
+You then need to add the RESTProvider's src as a dependency of this project by right clicking _Build Path > Link Src_ then selecting the directory of the RESTProvider's src on your disk.  
+
+h3{color:red;}.The Intrumentations cannot be run if the RESTProvider is included as src in the Demo project
 
 h3{color:red;}. Unit Tests are currently broken!
 
