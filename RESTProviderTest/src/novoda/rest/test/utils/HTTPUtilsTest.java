@@ -35,4 +35,14 @@ public class HTTPUtilsTest extends TestCase {
 		Map<String, String> map = new HashMap<String, String>();
 		assertEquals(map, HTTPUtils.convertToParams(null, null));
 	}
+	
+	public void testWithEmptyQueryArgument() throws Exception {
+	    String selection = "name=carl AND value=2";
+        assertEquals(expected, HTTPUtils.convertToParams(selection, null));
+    }
+	
+	public void testConvertingMapToQueryString() throws Exception {
+        assertEquals("?value=2&name=carl", HTTPUtils.convertToQueryString(expected));
+        assertEquals(null, HTTPUtils.convertToQueryString(null));
+    }
 }

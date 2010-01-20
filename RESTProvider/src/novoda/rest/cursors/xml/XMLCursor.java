@@ -4,6 +4,7 @@ package novoda.rest.cursors.xml;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+import novoda.rest.RESTProvider;
 import novoda.rest.handlers.QueryHandler;
 
 import org.apache.http.HttpResponse;
@@ -88,8 +89,8 @@ public abstract class XMLCursor extends AbstractCursor implements QueryHandler<X
     public short getShort(int column) {
         short ret = 0;
         try {
-            ret = Short.parseShort(((Node)document.selectSingleNode(getXPath(mPos,
-                    getColumnName(column)))).getStringValue());
+            ret = Short.parseShort(((Node)document.selectSingleNode(getXPath(mPos, getColumnName(column))))
+                    .getStringValue());
         } catch (NumberFormatException e) {
             Log.e(TAG, "Can't parse short for: " + document.asXML() + " using " + getCountXPath());
         }
@@ -111,13 +112,14 @@ public abstract class XMLCursor extends AbstractCursor implements QueryHandler<X
     public XMLCursor handleResponse(HttpResponse response) throws ClientProtocolException,
             IOException {
         String xml = EntityUtils.toString(response.getEntity());
+        if (RESTProvider.DEBUG)
+            Log.d(TAG, xml);
         SAXReader reader = new SAXReader();
         try {
             document = reader.read(new ByteArrayInputStream(xml.getBytes("UTF-8")));
         } catch (IllegalStateException e) {
             Log.e(TAG, "an error occured in handleResponse", e);
         } catch (DocumentException e) {
-            e.printStackTrace();
             Log.e(TAG, "an error occured in handleResponse", e);
         }
         return this;

@@ -26,10 +26,12 @@ public class HTTPUtils {
     public static Map<String, String> convertToParams(String selection, String[] selectionArgs) {
         if (selection == null)
             return new HashMap<String, String>();
-        
+
         String t = selection.replaceAll("\\sAND\\s|\\sand\\s", "&");
-        for (int i = 0; i < selectionArgs.length; i++) {
-            t = t.replaceFirst("\\?", selectionArgs[i]);
+        if (selectionArgs != null) {
+            for (int i = 0; i < selectionArgs.length; i++) {
+                t = t.replaceFirst("\\?", selectionArgs[i]);
+            }
         }
         return parseQuerystring(t);
     }
@@ -68,5 +70,17 @@ public class HTTPUtils {
             ret.put(entry.getKey(), entry.getValue().toString());
         }
         return ret;
+    }
+    
+    public static String convertToQueryString(Map<String, String> param){
+        if (param == null)
+            return null;
+        
+        StringBuffer buf = new StringBuffer("?");
+        for (Map.Entry<String, String> entry : param.entrySet()) {
+            buf.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+        }
+        buf.deleteCharAt(buf.length()-1);
+        return buf.toString();
     }
 }

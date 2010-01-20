@@ -6,6 +6,7 @@ VERSION_NUMBER = "0.0.1"
 # Group identifier for your projects
 GROUP = "RESTProvider"
 COPYRIGHT = "Novoda ltd"
+LICENSE = "Apache"
 
 # Specify Maven 2.0 remote repositories here, like this:
 repositories.remote << "http://www.ibiblio.org/maven2/"
@@ -36,6 +37,7 @@ define "RESTProvider", :layout => android_layout do
   compile.options.target = '1.5'
 
   define "RESTProvider" do
+	:removeTestFromJar
   	desc "Compiling and packaging the provider into a jar importable in orther projects."
 	eclipse.natures :eclipsesetup
 	url = "http://cloud.github.com/downloads/kaeppler/droid-fu/droid-fu-1.0-SNAPSHOT.jar"
@@ -50,5 +52,8 @@ define "RESTProvider", :layout => android_layout do
 
   define "RESTProviderTest" do
   end
-
+  
+  task :removeTestFromJar do
+	puts "hello"
+  end
 end
