@@ -23,9 +23,9 @@ android_layout[:source, :main, :java] = 'src'
 android_layout[:target, :main] = 'bin'
 
 define "eclipsesetup" do
-	eclipse.natures ['com.android.ide.eclipse.adt.AndroidNature', 'org.eclipse.jdt.core.javanature']
+	eclipse.natures << ['com.android.ide.eclipse.adt.AndroidNature', 'org.eclipse.jdt.core.javanature']
 	eclipse.classpath_containers 'org.eclipse.pde.core.requiredPlugins'
-	eclipse.builders ['com.android.ide.eclipse.adt.ResourceManagerBuilder', 'com.android.ide.eclipse.adt.PreCompilerBuilder', 'org.eclipse.jdt.core.javabuilder', 'com.android.ide.eclipse.adt.ApkBuilder']
+	eclipse.builders << ['com.android.ide.eclipse.adt.ResourceManagerBuilder', 'com.android.ide.eclipse.adt.PreCompilerBuilder', 'org.eclipse.jdt.core.javabuilder', 'com.android.ide.eclipse.adt.ApkBuilder']
 end
 
 desc "The Restprovider project"
@@ -37,14 +37,14 @@ define "RESTProvider", :layout => android_layout do
   compile.options.target = '1.5'
 
   define "RESTProvider" do
-	:removeTestFromJar
+	  :removeTestFromJar
   	desc "Compiling and packaging the provider into a jar importable in orther projects."
-	eclipse.natures :eclipsesetup
-	url = "http://cloud.github.com/downloads/kaeppler/droid-fu/droid-fu-1.0-SNAPSHOT.jar"
-	download(artifact("droidfu:droidfu:jar:1.0-SNAPSHOT") =>url)
+	  eclipse.natures :eclipsesetup
+	  url = "http://cloud.github.com/downloads/kaeppler/droid-fu/droid-fu-1.0-SNAPSHOT.jar"
+	  download(artifact("droidfu:droidfu:jar:1.0-SNAPSHOT") =>url)
   	compile.with SIGNPOST, JACKSON, DOM4J, DROIDFU, File.expand_path('android.jar', ENV['ANDROID_HOME'] + "/platforms/android-2.0")
   	compile
-	package :jar, :id => 'RESTProvider'
+	  package :jar, :id => 'RESTProvider'
   end
 
   define "RESTProviderLocalTest" do
