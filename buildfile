@@ -31,18 +31,13 @@ define "RESTProviderAll", :layout => android_layout do
   project.group = GROUP
   manifest["Implementation-Vendor"] = COPYRIGHT
   compile.options.target = '1.5'
+  eclipse.natures :android
 
   define "RESTProvider" do
     project.compile.sources << _('gen')
 	  url = "http://cloud.github.com/downloads/kaeppler/droid-fu/droid-fu-1.0-SNAPSHOT.jar"
 	  download(artifact("droidfu:droidfu:jar:1.0-SNAPSHOT") =>url)
   	compile.with SIGNPOST, JACKSON, DOM4J, DROIDFU, File.expand_path('android.jar', ENV['ANDROID_HOME'] + "/platforms/android-2.0")
-	  eclipse.natures = ['com.android.ide.eclipse.adt.AndroidNature', 'org.eclipse.jdt.core.javanature']
-	  eclipse.classpath_containers = 'com.android.ide.eclipse.adt.ANDROID_FRAMEWORK'
-	  eclipse.builders = ['com.android.ide.eclipse.adt.ResourceManagerBuilder', 
-                        'com.android.ide.eclipse.adt.PreCompilerBuilder', 
-                        'org.eclipse.jdt.core.javabuilder', 
-                        'com.android.ide.eclipse.adt.ApkBuilder']
     eclipse.exclude_libs = [File.expand_path('android.jar', ENV['ANDROID_HOME'] + "/platforms/android-2.0")]
 	  package :jar, :id => 'RESTProvider'
   end
@@ -52,47 +47,11 @@ define "RESTProviderAll", :layout => android_layout do
 
   define "RESTProviderTest" do
     project.compile.sources << _('gen')
-#    project.compile.sources << project('RESTProvider')._('src')
 	  url = "http://cloud.github.com/downloads/kaeppler/droid-fu/droid-fu-1.0-SNAPSHOT.jar"
 	  download(artifact("droidfu:droidfu:jar:1.0-SNAPSHOT") =>url)
   	compile.with SIGNPOST, JACKSON, DOM4J, DROIDFU, File.expand_path('android.jar', ENV['ANDROID_HOME'] + "/platforms/android-2.0"), project('RESTProvider')
-	  eclipse.natures = ['com.android.ide.eclipse.adt.AndroidNature', 'org.eclipse.jdt.core.javanature']
-	  eclipse.classpath_containers = 'com.android.ide.eclipse.adt.ANDROID_FRAMEWORK'
-	  eclipse.builders = ['com.android.ide.eclipse.adt.ResourceManagerBuilder', 
-                        'com.android.ide.eclipse.adt.PreCompilerBuilder', 
-                        'org.eclipse.jdt.core.javabuilder', 
-                        'com.android.ide.eclipse.adt.ApkBuilder']
     eclipse.external_sources = project('RESTProvider')
     eclipse.exclude_libs = [File.expand_path('android.jar', ENV['ANDROID_HOME'] + "/platforms/android-2.0")]
-  end
-
-
-  # The only thing we need to look for is a change in the Buildfile.
-  file(project.path_to('.project')=>Buildr.application.buildfile) do |task|
-    info "Writing #{task.name}"
-    File.open(task.name, 'w') do |file|
-      xml = Builder::XmlMarkup.new(:target=>file, :indent=>2)
-      xml.projectDescription do
-        xml.name project.id
-        xml.projects
-        unless project.eclipse.builders.empty?
-          xml.buildSpec do
-            project.eclipse.builders.each { |builder|
-              xml.buildCommand do
-                xml.name builder
-              end
-            }
-          end
-        end
-        unless project.eclipse.natures.empty?
-          xml.natures do
-            project.eclipse.natures.each { |nature|
-              xml.nature nature unless nature.is_a? Symbol
-            }
-          end
-        end
-      end
-    end
   end
 
 end
