@@ -63,6 +63,7 @@ Dependant files needed on build path, add the following to RESTProvider/RESTProv
 * "DOM4J":http://sourceforge.net/projects/dom4j/files/dom4j/1.6.1/dom4j-1.6.1.jar/download
 * "Jackson-core-asl-1.4.1.jar":http://repository.codehaus.org/org/codehaus/jackson/jackson-core-asl/1.4.1/jackson-core-asl-1.4.1.jar
 * "Jackson-mapper-asl-1.4.1.jar":http://repository.codehaus.org/org/codehaus/jackson/jackson-mapper-asl/1.4.1/
+* "Google Collections 1.0":http://code.google.com/p/google-collections/
 
 Refresh the directories in eclipse (F5 with the project selected)
 All jars under 'libs' need to be added to the build path.
